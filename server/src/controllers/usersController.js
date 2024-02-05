@@ -3,7 +3,13 @@ const mongoose = require('mongoose');
 
 const addUser = async(req, res) => {
     try {
-        const newUser = new User(req.body);
+        const usernameTaken = await User.find({username: req.body.username});
+        if(usernameTaken.length >= 1 ) {
+            return res.status(409).send({message: "Username taken"});
+        }
+        const data = { ...req.body, passwordHash: req.body.password};
+        delete data.password;
+        const newUser = new User(data);
         await newUser.save();
         res.status(201).json(newUser);
     } catch(err) {
@@ -11,6 +17,20 @@ const addUser = async(req, res) => {
             return res.status(400).json({ message:err.message });
         }
         res.status(500).json({ message: "Internal Server Error" });       
+    }
+};
+
+const getUser = async(req, res) => {
+    try {
+        const id = req.params.userID;
+        const data = await User.findById(id);
+        const { role, passwordHash, __v, ...cleanedData } = data.toObject();
+        res.status(200).json(cleanedData);
+    } catch(err) {
+        if(err.name==='ValidationError') {
+            return res.status(400).json({ message:err.message });
+        }
+        res.status(500).json({ message: "Internal Server Error" });   
     }
 };
 
@@ -33,9 +53,17 @@ const updateUser = async(req, res) => {
         if(!data) {
             return res.status(404).send(`User with id ${id} not found`);
         }
+        
+        const unpermitted = ['role'];
+        const isPermitted = Object.keys(req.body).every((field) => !unpermitted.includes(field));
+        if(!isPermitted) {
+            return res.status(400).send({ message: 'Invalid updates!' });
+        }
+
         await User.updateOne({ _id:id }, req.body);
-        const newData = await User.findById(id)
-        res.status(200).json(newData);
+        const newData = await User.findById(id);
+        const { role, passwordHash, ...cleanedData } = newData;
+        res.status(200).json(cleanedData);
     } catch(err) {
         if(err.name==='ValidationError') {
             return res.status(400).json({ message:err.message });
@@ -63,4 +91,4 @@ const deleteUser = async(req, res) => {
 
 
 
-module.exports = { addUser, listUsers, updateUser, deleteUser }
+module.exports = { addUser, listUsers, updateUser, deleteUser, getUser }

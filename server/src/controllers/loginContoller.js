@@ -17,7 +17,8 @@ const authentication = async(req, res) => {
             } else {
                 if(result) {
                     const token = jwt.sign({'userID':userData._id}, process.env.JWT_SECRET, {expiresIn :'1hr'});
-                    res.status(200).json({token:token});
+                    res.cookie('token', token, { httpOnly: true, maxAge: 3600000, SameSite: 'Lax' }); // For local development
+                    res.status(200).json({ userID: userData._id });
                 } else {
                     res.status(400).send('Incorrect username/password');
                 }

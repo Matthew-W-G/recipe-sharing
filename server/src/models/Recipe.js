@@ -5,13 +5,25 @@ const recipeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ingredients: String,
-    prepTime: Number,
-    author: {
+    ingredients: {
+        type: Array,
+        required: true
+    },
+    steps: {
+        type: Array,
+        required: true
+    },
+    prepTime: {
+        type: String,
+        required: true
+    },
+    authorID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-});
+    author: {
+        type: String,
+    }});
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
 module.exports = Recipe;

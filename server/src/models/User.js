@@ -14,16 +14,24 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        require: true
+    },
     passwordHash: {
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        default: 'user',
+        enum: ['user', 'admin']
+    }
 });
 
 const saltRounds = 10;
 
 userSchema.pre('save', function(next) {
-    console.log(this.isModified('passwordHash'));
     if(!this.isModified('passwordHash')) {
         return next();
     }
@@ -33,7 +41,6 @@ userSchema.pre('save', function(next) {
             next(err);
         } else {
             this.passwordHash = hash;
-            console.log(this.passwordHash);
             next();
         }
     });

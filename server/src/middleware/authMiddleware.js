@@ -3,13 +3,12 @@ const User = require('../models/User.js')
 const Recipe = require('../models/Recipe.js')
 
 //just veryifying token is authentic
-const verifyToken = (req, res, next) => {
-    let authHeader = req.headers.authorization;
+const verifyToken = async(req, res, next) => {
+    const jwtToken = req.cookies.token;
 
-    if(!authHeader) {
-        return res.status(401).json({ message: 'Authentication token is missing.' });
+    if(!jwtToken) {
+        return res.status(401).json({message:'Unauthorized'});
     }
-    const jwtToken = authHeader.split(' ')[1];
 
     jwt.verify(jwtToken, process.env.JWT_SECRET, (err, data) => {
         if(err) {
@@ -21,27 +20,16 @@ const verifyToken = (req, res, next) => {
     })
 }
 
-//authenticateUserAction and authenticateRecipeAction verifies accuracy of id param
-const authenticateUserAction = (req, res, next) => {
-    if(!req.user || !req.user.userID || req.user.userID !== req.params.userID) {
-        return res.status(403).json({message:'Unauthorized access'});
+//authenticateAdminAction, authenticateUserAction and authenticateRecipeAction verify accuracy of id param
+const authenticateAdminAction = async(req, res, next) => {
+    if(!req.user || !req.user.userID) {
+        return res.status(400).json({message:'Error with user'});
     }
-    else {
-        next();
-    }
-}
-
-const authenticateRecipeAction = async(req, res, next) => {
     try {
         const user = await User.findById(req.user.userID);
-        if(!user) {
-            return res.status(403).json({message:'Unauthorized access'});
-        }
-
-        const recipe = await Recipe.findById(req.params.recipeID);
-
-        if(!recipe.author.equals(user._id)) {
-            return res.status(403).json({message:'Unauthorized access'});
+        const role = user.role
+        if(role !== 'admin') {
+            return res.status(403).json({message:'Permission issue'});
         }
         else {
             next();
@@ -54,6 +42,60 @@ const authenticateRecipeAction = async(req, res, next) => {
     }
 }
 
+const authenticateUserAction = async(req, res, next) => {
+    if(!req.user || !req.user.userID) {
+        return res.status(400).json({message:'Error with user'});
+    }
+
+    try {
+        const user = await User.findById(req.user.userID);
+        const role = user.role;
+        if(role === 'admin' || role == 'user' && req.user.userID === req.params.userID) {
+            next();
+        }
+        else {
+            return res.status(403).json({message:'Unauthorized access'});
+        }
+    } catch(err) {
+        if(err.name==='ValidationError') {
+            return res.status(400).json({ message:err.message });
+        }
+        res.status(500).json({ message: "Internal Server Error" }); 
+    }
+}
+
+const authenticateRecipeAction = async(req, res, next) => {
+    if(!req.user || !req.user.userID) {
+        return res.status(400).json({message:'Error with user'});
+    }
+
+    try {
+        const user = await User.findById(req.user.userID);
+        if(!user) {
+            return res.status(403).json({message:'Unauthorized access'});
+        }
+        const role = user.role;
+
+        if(!req.params.recipeID) {
+            next();
+            return;
+        }
+
+        const recipe = await Recipe.findById(req.params.recipeID);
+        if(role === 'admin' || role == 'user' && recipe.authorID.equals(user._id)) {
+            next();
+        }
+        else {
+            return res.status(403).json({message:'Unauthorized access'});
+        }
+    } catch(err) {
+        if(err.name==='ValidationError') {
+            return res.status(400).json({ message:err.message });
+        }
+        res.status(500).json({ message: "Internal Server Error" }); 
+    }
+}
 
 
-module.exports = { verifyToken, authenticateUserAction, authenticateRecipeAction};
+
+module.exports = { verifyToken, authenticateAdminAction, authenticateUserAction, authenticateRecipeAction};
