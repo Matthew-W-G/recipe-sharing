@@ -1,0 +1,14 @@
+.imageContainer {
+    display: flex;
+    overflow: hidden;
+    height: 20vh;
+    width: 100%;
+}
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* This will cover the area of the container */
+    object-position: center;
+    /* Align the image nicely in the container */
+}

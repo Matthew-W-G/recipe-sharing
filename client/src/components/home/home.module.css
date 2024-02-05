@@ -1,0 +1,27 @@
+.imageContainer {
+    width: 100%;
+    /* Full width of the viewport */
+    height: 90vh;
+    /* 90% of the viewport height */
+    overflow: hidden;
+    /* Ensures no spillover if the image is too big */
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* This will cover the area of the container */
+    object-position: center;
+    /* Align the image nicely in the container */
+}
+
+.header {
+    color: white;
+    mix-blend-mode: exclusion;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}

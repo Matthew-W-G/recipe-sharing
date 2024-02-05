@@ -1,24 +1,53 @@
-import logo from './logo.svg';
 import './App.css';
+import Header from './components/header';
+import Login from './components/login';
+import Home from './components/home/home';
+import User from './components/User';
+import FindRecipes from './components/findRecipes/findRecipes'
+import ViewRecipe from './components/viewRecipe/viewRecipe';
+import AddRecipe from './components/addRecipe/addRecipe';
+import { React } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginAction, logoutAction } from './loginSlice';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetch("http://localhost:3001/verifyToken", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include', // Important for cookies
+    }).then((response) => {
+      if (!response.ok) {
+        dispatch(logoutAction());
+        throw new Error('Response not OK');
+      }
+      return response.json();
+    }).then(data => {
+      dispatch(loginAction(data.userID));
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/home" element={<Home />}></Route>
+        <Route path="/findrecipes" element={<FindRecipes />}></Route>
+        <Route path="/addrecipe" element={<AddRecipe />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/user" element={<User />}></Route>
+        <Route path="/recipe/:recipeID" element={<ViewRecipe ></ViewRecipe>}></Route>
+      </Routes>
+    </Router>
   );
 }
 

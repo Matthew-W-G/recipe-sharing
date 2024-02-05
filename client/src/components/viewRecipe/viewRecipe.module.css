@@ -1,0 +1,35 @@
+.imageContainer {
+    width: 100%;
+    height: 50vh;
+    overflow: hidden;
+    text-align: center
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.header {
+    color: black;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.contentContainer {
+    text-align: center;
+}
+
+.ingredientsCol {
+    justify-content: left;
+    /* This will center the child element horizontally */
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.stepsCol {
+    justify-content: left;
+    /* This will center the child element horizontally */
+    font-family: 'Courier New', Courier, monospace;
+
+}

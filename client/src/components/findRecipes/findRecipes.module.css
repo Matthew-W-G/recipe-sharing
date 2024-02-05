@@ -1,0 +1,15 @@
+.descriptionRight {
+    justify-content: center;
+    text-align: left;
+    /* This will center the child element horizontally */
+    font-family: 'Courier New', Courier, monospace;
+    color: black;
+}
+
+.descriptionLeft {
+    justify-content: center;
+    text-align: right;
+    /* This will center the child element horizontally */
+    font-family: 'Courier New', Courier, monospace;
+    color: black;
+}
