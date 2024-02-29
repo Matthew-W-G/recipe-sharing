@@ -14,7 +14,7 @@ function User() {
             if (!isLoggedin) {
                 navigate('/login');
             } else {
-                fetch(`http://localhost:3001/users/${userID}`, {
+                fetch(`${process.env.REACT_APP_API_URL}/users/${userID}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -36,7 +36,7 @@ function User() {
 
     function saveChanges(e) {
         e.preventDefault();
-        fetch(`http://localhost:3001/users/updateUser/${userID}`, {
+        fetch(`${process.app.REACT_APP_API_URL}/users/updateUser/${userID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

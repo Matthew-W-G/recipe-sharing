@@ -17,7 +17,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch("http://localhost:3001/verifyToken", {
+    fetch(`${process.env.REACT_APP_API_URL}/verifyToken`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        <Route path="/home" element={<Home />}></Route>
+        <Route path="/" element={<Home />}></Route>
         <Route path="/findrecipes" element={<FindRecipes />}></Route>
         <Route path="/addrecipe" element={<AddRecipe />}></Route>
         <Route path="/login" element={<Login />}></Route>

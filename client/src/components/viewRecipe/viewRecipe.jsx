@@ -12,7 +12,7 @@ function ViewRecipe() {
     const recipeID = params.recipeID;
 
     useEffect(() => {
-        fetch(`http://localhost:3001/recipes/${recipeID}`).
+        fetch(`${process.env.REACT_APP_API_URL}/recipes/${recipeID}`).
             then(response => {
                 if (!response.ok) {
                     throw new Error(response.status);

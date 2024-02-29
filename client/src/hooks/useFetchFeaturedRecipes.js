@@ -1,7 +1,7 @@
 import useSWR from 'swr'; 
 
 function useFetchFeaturedRecipes() {
-    const link = "http://localhost:3001/recipes/featured";
+    const link = `${process.env.REACT_APP_API_URL}/recipes/featured`;
     const fetcher = (url) => {
         return fetch(url).then(res => {
             return res.json();

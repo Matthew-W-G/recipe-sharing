@@ -25,7 +25,7 @@ function Register(props) {
   function registrationRequest(e) {
     if (checkFields()) {
       e.preventDefault();
-      fetch('http://localhost:3001/users/adduser',
+      fetch(`${process.env.REACT_APP_API_URL}/users/adduser`,
         {
           method: 'POST',
           headers: {

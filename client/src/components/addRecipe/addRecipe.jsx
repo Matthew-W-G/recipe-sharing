@@ -78,7 +78,7 @@ function AddRecipe() {
                 'prepTime': time
             };
             console.log(recipeData)
-            fetch('http://localhost:3001/recipes/addRecipe', {
+            fetch(`${process.env.REACT_APP_API_URL}/recipes/addRecipe`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
